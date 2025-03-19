@@ -162,6 +162,7 @@ class SeqDenoiser(nn.Module):
                restrict_pos_aatype: Optional[Tuple[TensorType["b n", float],
                                                    TensorType["b n k", int]]] = None,  # restrict aatype sampling at certain positions
                scd_inputs: Dict[str, Any] = {},  # sidechain diffusion inputs
+               exclude_cys: bool = False,  # exclude cysteine from sampling
                ):
         """
         scd_inputs should contain the following keys:
@@ -172,7 +173,8 @@ class SeqDenoiser(nn.Module):
         aux, aux_inputs = {}, {}
         S = timesteps.shape[1] - 1
         B, N, A, _ = x.shape
-
+        # Add exclude_cys to aux_inputs
+        aux_inputs["exclude_cys"] = exclude_cys
         # Handle default overrides
         if aatype_override_mask is None:
             aatype_override_mask = torch.zeros((B, N), device=residue_index.device, dtype=torch.long)  # don't override anything

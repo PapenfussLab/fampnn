@@ -20,6 +20,7 @@ seq_only: false  # true to not pack sidechains during sampling
 temperature: 0.1
 repack_last: true  # after design, repack the final sequence obtained in a single step
 psce_threshold: 0.3  # only keep sidechains below this PSCE threshold during design; null to keep all
+exclude_cys: false # whether or not to exclude cysteines in the output sequence
 
 timestep_schedule:
   num_steps: 100

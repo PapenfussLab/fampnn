@@ -100,7 +100,6 @@ class FAMPNNDenoiser(nn.Module):
         Sample aatype from seq logits
         If training, just take argmax (this will be teacher-forced to the ground truth aatype during sidechain diffusion)
         If sampling, sample from (possibly temperature-scaled) logits
-
         Returns:
         - aatype_pred: Tensor["b n", int]
         - scaled_seq_probs: Tensor["b n k", float]: seq_probs scaled by temperature and sampling modifications
@@ -110,6 +109,10 @@ class FAMPNNDenoiser(nn.Module):
 
         # Handle aatype restrictions
         seq_logits[..., rc.restype_order_with_x["X"]] = -1e9  # do not sample mask/unknowns
+        # Check for exclude_cys parameter and exclude cysteine if true
+        exclude_cys = aux_inputs.get("exclude_cys", False)
+        if exclude_cys:
+            seq_logits[..., rc.restype_order_with_x["C"]] = -1e9  # do not sample cysteines
         restrict_pos_aatype = aux_inputs.get("restrict_pos_aatype", None)
         if restrict_pos_aatype is not None:
             restrict_pos_mask, allowed_aatype_mask = restrict_pos_aatype  # (B, N), (B, N, K)
