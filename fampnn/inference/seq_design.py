@@ -155,8 +155,8 @@ def main(cfg: DictConfig):
             aatype_override_mask=aatype_override_mask,
             scn_override_mask=scn_override_mask,
             scd_inputs=scd_inputs,
+            exclude_cys=cfg.exclude_cys,
         )
-
         samples = {
             "x_denoised": x_denoised,
             "seq_mask": batch["seq_mask"],
